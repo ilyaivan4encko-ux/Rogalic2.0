@@ -1,0 +1,2662 @@
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>РАГАЛИК</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #121212;
+            --secondary: #1e1e1e;
+            --accent: #00d4ff;
+            --danger: #ff4757;
+            --success: #2ed573;
+            --warning: #ffa502;
+            --purple: #a55eea;
+            --gold: #ffd700;
+            --text: #ffffff;
+            --text-secondary: #b0b0b0;
+            --card-bg: rgba(30, 30, 30, 0.9);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', 'Roboto', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0a, #1a1a1a);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+            touch-action: manipulation;
+        }
+
+        .container {
+            max-width: 100%;
+            padding: 10px;
+        }
+
+        /* Шапка для мобильных */
+        .mobile-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        .logo-text p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Мобильная панель статистики */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .stat-item {
+            background: var(--card-bg);
+            padding: 10px 8px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid var(--border);
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .floor-stat {
+            color: var(--accent);
+        }
+
+        .gold-stat {
+            color: var(--gold);
+        }
+
+        .health-stat {
+            color: var(--success);
+        }
+
+        .level-stat {
+            color: var(--purple);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        /* Игровая сцена */
+        .game-scene-container {
+            margin: 15px 0;
+            position: relative;
+            height: 50vh;
+            min-height: 350px;
+            background: linear-gradient(to bottom, #0f0f0f, #1a1a1a);
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid var(--border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .game-scene {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Элементы игры - оптимизированные для тапа */
+        .floor {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to top, #2d2d2d, #1a1a1a);
+            border-top: 3px solid #3d3d3d;
+        }
+
+        .platform {
+            position: absolute;
+            background: linear-gradient(135deg, #2d2d2d, #1f1f1f);
+            border: 2px solid #3d3d3d;
+            border-radius: 8px;
+        }
+
+        .hero {
+            position: absolute;
+            width: 55px;
+            height: 75px;
+            background: linear-gradient(135deg, var(--accent), #0088cc);
+            border-radius: 12px 12px 0 0;
+            transition: all 0.3s ease;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+            border: 3px solid #00bfff;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .hero:active {
+            transform: scale(0.95);
+        }
+
+        .hero-head {
+            width: 35px;
+            height: 35px;
+            background: #00bfff;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+
+        .hero-body {
+            width: 45px;
+            height: 35px;
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        .enemy {
+            position: absolute;
+            width: 50px;
+            height: 65px;
+            background: linear-gradient(135deg, var(--danger), #ff2e43);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            border: 2px solid #ff2e43;
+            touch-action: manipulation;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 71, 87, 0.3);
+        }
+
+        .enemy:active {
+            transform: scale(0.95);
+        }
+
+        .enemy-head {
+            width: 30px;
+            height: 30px;
+            background: #ff2e43;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+
+        .enemy-body {
+            width: 40px;
+            height: 35px;
+            background: var(--danger);
+            border-radius: 6px;
+        }
+
+        .chest {
+            position: absolute;
+            width: 55px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--warning), #e6b429);
+            border-radius: 8px;
+            border: 3px solid #e6b429;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 165, 2, 0.3);
+        }
+
+        .chest:active {
+            transform: scale(0.95);
+        }
+
+        .chest-lid {
+            width: 45px;
+            height: 10px;
+            background: #e6b429;
+            position: absolute;
+            top: -10px;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .chest i {
+            color: #8b6914;
+            font-size: 1.4rem;
+        }
+
+        .merchant {
+            position: absolute;
+            width: 55px;
+            height: 75px;
+            background: linear-gradient(135deg, var(--success), #25a25a);
+            border-radius: 12px;
+            border: 3px solid #25a25a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            touch-action: manipulation;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 213, 115, 0.3);
+        }
+
+        .merchant:active {
+            transform: scale(0.95);
+        }
+
+        .merchant-head {
+            width: 35px;
+            height: 35px;
+            background: #25a25a;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+
+        .merchant-body {
+            width: 45px;
+            height: 35px;
+            background: var(--success);
+            border-radius: 10px;
+        }
+
+        .trap {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--purple), #8a4dbf);
+            border-radius: 50%;
+            border: 2px solid #8a4dbf;
+            touch-action: manipulation;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(165, 94, 234, 0.3);
+        }
+
+        .trap:active {
+            transform: scale(0.95);
+        }
+
+        .portal {
+            position: absolute;
+            width: 65px;
+            height: 85px;
+            background: radial-gradient(circle, var(--accent), #0088cc);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+            border: 3px solid #00bfff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .portal:active {
+            transform: scale(0.95);
+        }
+
+        .portal i {
+            color: white;
+            font-size: 1.8rem;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+
+        .health-bar {
+            position: absolute;
+            top: -15px;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background-color: #444;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .health-fill {
+            height: 100%;
+            background-color: var(--success);
+            width: 100%;
+            transition: width 0.3s;
+        }
+
+        .enemy-health-fill {
+            background-color: var(--danger);
+        }
+
+        /* Панель действий */
+        .action-panel {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border);
+            padding: 15px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: linear-gradient(135deg, var(--secondary), #2a2a2a);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px 5px;
+            color: var(--text);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            touch-action: manipulation;
+            user-select: none;
+            min-height: 80px;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+            background: linear-gradient(135deg, #2a2a2a, var(--secondary));
+        }
+
+        .action-btn i {
+            font-size: 1.4rem;
+        }
+
+        .attack-btn {
+            background: linear-gradient(135deg, var(--danger), #ff2e43);
+        }
+
+        .heal-btn {
+            background: linear-gradient(135deg, var(--success), #25a25a);
+        }
+
+        .open-btn {
+            background: linear-gradient(135deg, var(--warning), #e6b429);
+        }
+
+        .shop-btn {
+            background: linear-gradient(135deg, var(--purple), #8a4dbf);
+        }
+
+        /* Вкладки */
+        .tabs-container {
+            margin: 15px 0;
+        }
+
+        .tabs-header {
+            display: flex;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            touch-action: manipulation;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Инвентарь */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .inventory-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            min-height: 100px;
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .inventory-item:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .item-name {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .item-count {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: var(--accent);
+            color: var(--primary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        /* Магазин */
+        .shop-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .shop-item {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border);
+            touch-action: manipulation;
+            cursor: pointer;
+        }
+
+        .shop-item:active {
+            transform: scale(0.98);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .shop-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--purple));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .shop-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .shop-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .shop-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.3;
+        }
+
+        .shop-price {
+            font-weight: 700;
+            color: var(--gold);
+            font-size: 1rem;
+            white-space: nowrap;
+        }
+
+        /* Модальные окна */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal {
+            background: var(--primary);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 85vh;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--secondary), #2a2a2a);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, var(--accent), var(--purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            touch-action: manipulation;
+        }
+
+        .modal-close:active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-content {
+            padding: 20px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        /* Боевое окно */
+        .battle-container {
+            text-align: center;
+        }
+
+        .battle-characters {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .character {
+            text-align: center;
+        }
+
+        .character-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-avatar {
+            background: linear-gradient(135deg, var(--accent), #0088cc);
+        }
+
+        .enemy-avatar {
+            background: linear-gradient(135deg, var(--danger), #ff2e43);
+        }
+
+        .character-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .character-health {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .vs-text {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .battle-log {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            min-height: 80px;
+            text-align: left;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        .battle-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .battle-btn {
+            padding: 15px;
+            border-radius: 12px;
+            border: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            touch-action: manipulation;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .battle-btn:active {
+            transform: scale(0.95);
+        }
+
+        .battle-btn i {
+            font-size: 1.2rem;
+        }
+
+        .attack-action {
+            background: linear-gradient(135deg, var(--danger), #ff2e43);
+        }
+
+        .potion-action {
+            background: linear-gradient(135deg, var(--success), #25a25a);
+        }
+
+        .flee-action {
+            background: linear-gradient(135deg, var(--warning), #e6b429);
+        }
+
+        /* Прогресс */
+        .progress-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border);
+        }
+
+        .progress-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .progress-bar {
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--purple));
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 5px;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: linear-gradient(135deg, var(--secondary), #2a2a2a);
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+            width: auto;
+            border: 1px solid var(--border);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, var(--success), #25a25a);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, var(--danger), #ff2e43);
+        }
+
+        .notification-warning {
+            background: linear-gradient(135deg, var(--warning), #e6b429);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, var(--accent), #0088cc);
+        }
+
+        .notification-text {
+            font-size: 0.9rem;
+            line-height: 1.3;
+        }
+
+        /* Адаптация для разных размеров экрана */
+        @media (max-width: 380px) {
+            .stat-item {
+                padding: 8px 5px;
+                min-height: 60px;
+            }
+            
+            .stat-value {
+                font-size: 1rem;
+            }
+            
+            .action-btn {
+                padding: 12px 3px;
+                font-size: 0.75rem;
+                min-height: 70px;
+            }
+            
+            .action-btn i {
+                font-size: 1.2rem;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                max-width: 768px;
+                margin: 0 auto;
+            }
+            
+            .game-scene-container {
+                height: 60vh;
+            }
+            
+            .action-buttons {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .action-btn {
+                padding: 20px 10px;
+                font-size: 0.9rem;
+            }
+            
+            .action-btn i {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Анимации */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake-animation {
+            animation: shake 0.5s ease;
+        }
+
+        /* Скрыть скроллбар для WebKit браузеров */
+        .shop-items::-webkit-scrollbar,
+        .modal-content::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .shop-items::-webkit-scrollbar-track,
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+
+        .shop-items::-webkit-scrollbar-thumb,
+        .modal-content::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Загрузчик */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <!-- Загрузчик -->
+    <div class="loader" id="loader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Загрузка РАГАЛИК...</div>
+    </div>
+
+    <!-- Шапка -->
+    <div class="mobile-header">
+        <div class="header-top">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-dungeon"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>РАГАЛИК</h1>
+                    <p>27 ярусов подземелья</p>
+                </div>
+            </div>
+            <button class="menu-btn" id="menu-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value floor-stat" id="current-floor">1</div>
+                <div class="stat-label">ЯРУС</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value gold-stat" id="gold-amount">100</div>
+                <div class="stat-label">ЗОЛОТО</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value health-stat" id="hero-health">100</div>
+                <div class="stat-label">ЗДОРОВЬЕ</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value level-stat" id="hero-level">1</div>
+                <div class="stat-label">УРОВЕНЬ</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Игровая сцена -->
+    <div class="container">
+        <div class="game-scene-container">
+            <div class="game-scene" id="game-scene">
+                <div class="floor"></div>
+                <!-- Игровые объекты будут генерироваться здесь -->
+            </div>
+        </div>
+
+        <!-- Информация о ярусе -->
+        <div class="progress-container">
+            <div class="progress-title" id="floor-name">Ярус 1: Вход в Подземелье</div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="floor-progress-bar" style="width: 0%"></div>
+            </div>
+            <div class="progress-text" id="floor-description">Начало опасного путешествия. Будьте осторожны!</div>
+        </div>
+
+        <!-- Вкладки -->
+        <div class="tabs-container">
+            <div class="tabs-header">
+                <button class="tab-btn active" data-tab="inventory">
+                    <i class="fas fa-backpack"></i>
+                </button>
+                <button class="tab-btn" data-tab="shop">
+                    <i class="fas fa-store"></i>
+                </button>
+                <button class="tab-btn" data-tab="progress">
+                    <i class="fas fa-chart-line"></i>
+                </button>
+                <button class="tab-btn" data-tab="save">
+                    <i class="fas fa-save"></i>
+                </button>
+            </div>
+
+            <!-- Инвентарь -->
+            <div id="inventory" class="tab-content active">
+                <div class="inventory-grid" id="inventory-grid">
+                    <!-- Инвентарь будет заполняться через JS -->
+                </div>
+            </div>
+
+            <!-- Магазин -->
+            <div id="shop" class="tab-content">
+                <div class="shop-items" id="shop-items">
+                    <!-- Товары магазина будут заполняться через JS -->
+                </div>
+            </div>
+
+            <!-- Прогресс -->
+            <div id="progress" class="tab-content">
+                <div class="progress-container">
+                    <div class="progress-title">Цель: 27 Ярус</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="goal-progress" style="width: 3.7%"></div>
+                    </div>
+                    <div class="progress-text" id="progress-text">Прогресс: 1/27 ярусов</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
+                    <div class="stat-item">
+                        <div class="stat-value" id="enemies-killed">0</div>
+                        <div class="stat-label">Убито врагов</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="chests-opened">0</div>
+                        <div class="stat-label">Открыто сундуков</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Сохранение -->
+            <div id="save" class="tab-content">
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <button class="action-btn" id="save-game-btn" style="background: linear-gradient(135deg, var(--success), #25a25a);">
+                        <i class="fas fa-save"></i>
+                        Сохранить игру
+                    </button>
+                    <button class="action-btn" id="load-game-btn" style="background: linear-gradient(135deg, var(--accent), #0088cc);">
+                        <i class="fas fa-folder-open"></i>
+                        Загрузить игру
+                    </button>
+                    <button class="action-btn" id="reset-game-btn" style="background: linear-gradient(135deg, var(--danger), #ff2e43);">
+                        <i class="fas fa-redo"></i>
+                        Начать заново
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Панель действий -->
+    <div class="action-panel">
+        <div class="action-buttons">
+            <button class="action-btn attack-btn" id="attack-btn">
+                <i class="fas fa-crosshairs"></i>
+                Атака
+            </button>
+            <button class="action-btn heal-btn" id="heal-btn">
+                <i class="fas fa-heart"></i>
+                Лечение
+            </button>
+            <button class="action-btn open-btn" id="open-btn">
+                <i class="fas fa-box-open"></i>
+                Открыть
+            </button>
+            <button class="action-btn shop-btn" id="shop-btn">
+                <i class="fas fa-store"></i>
+                Магазин
+            </button>
+        </div>
+    </div>
+
+    <!-- Модальное окно боя -->
+    <div class="modal-overlay" id="battle-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">БОЙ</div>
+                <button class="modal-close" id="close-battle">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div class="battle-container" id="battle-content">
+                    <!-- Контент боя будет здесь -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно сундука -->
+    <div class="modal-overlay" id="chest-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">СУНДУК</div>
+                <button class="modal-close" id="close-chest">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="chest-content">
+                    <!-- Контент сундука будет здесь -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Модальное окно портала -->
+    <div class="modal-overlay" id="portal-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">ПОРТАЛ</div>
+                <button class="modal-close" id="close-portal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="portal-content">
+                    <!-- Контент портала будет здесь -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Уведомление -->
+    <div class="notification" id="notification">
+        <div class="notification-icon notification-info">
+            <i class="fas fa-info-circle"></i>
+        </div>
+        <div class="notification-text" id="notification-text">Уведомление</div>
+    </div>
+
+    <script>
+        // Игровые данные
+        const gameData = {
+            currentFloor: 1,
+            maxFloor: 27,
+            gold: 100,
+            heroHealth: 100,
+            heroMaxHealth: 100,
+            heroLevel: 1,
+            heroExp: 0,
+            expToNextLevel: 100,
+            
+            enemiesKilled: 0,
+            chestsOpened: 0,
+            trapsTriggered: 0,
+            merchantsVisited: 0,
+            floorsCompleted: 0,
+            totalDamageDealt: 0,
+            totalGoldCollected: 100,
+            playTime: 0,
+            
+            attackPower: 10,
+            defense: 5,
+            criticalChance: 5,
+            criticalMultiplier: 2,
+            dodgeChance: 10,
+            
+            inventory: {
+                healthPotion: { name: "Зелье здоровья", count: 3, description: "Восстанавливает 30 HP", icon: "fas fa-heart", type: "consumable" },
+                attackPotion: { name: "Зелье силы", count: 1, description: "+5 к атаке на 5 боев", icon: "fas fa-fist-raised", type: "consumable" },
+                defensePotion: { name: "Зелье защиты", count: 1, description: "+5 к защите на 5 боев", icon: "fas fa-shield-alt", type: "consumable" },
+                smallKey: { name: "Маленький ключ", count: 2, description: "Открывает простые сундуки", icon: "fas fa-key", type: "key" },
+                bigKey: { name: "Большой ключ", count: 0, description: "Открывает ценные сундуки", icon: "fas fa-key", type: "key" },
+                treasureMap: { name: "Карта сокровищ", count: 0, description: "Показывает скрытые сундуки", icon: "fas fa-map", type: "special" }
+            },
+            
+            equipment: {
+                weapon: { name: "Ржавый меч", attack: 5 },
+                armor: { name: "Кожаная броня", defense: 3 }
+            },
+            
+            gameState: "exploring",
+            selectedObject: null,
+            floorProgress: 0,
+            floorCompleted: false,
+            floorObjects: [],
+            
+            settings: {
+                sound: true,
+                animations: true,
+                autoSave: true
+            },
+            
+            lastSave: null,
+            gameVersion: "1.0"
+        };
+
+        // Данные врагов
+        const enemiesData = [
+            { name: "Гоблин", health: 30, attack: 5, gold: 10, exp: 15, color: "#2ed573" },
+            { name: "Слайм", health: 40, attack: 3, gold: 5, exp: 10, color: "#70a1ff" },
+            { name: "Крыса", health: 25, attack: 7, gold: 8, exp: 12, color: "#ff6b81" },
+            { name: "Скелет", health: 35, attack: 6, gold: 12, exp: 18, color: "#dfe4ea" },
+            { name: "Орк", health: 60, attack: 10, gold: 25, exp: 30, color: "#1dd1a1" },
+            { name: "Темный маг", health: 50, attack: 15, gold: 30, exp: 35, color: "#3742fa" },
+            { name: "Гарпия", health: 45, attack: 12, gold: 20, exp: 25, color: "#ff9ff3" },
+            { name: "Минотавр", health: 80, attack: 18, gold: 40, exp: 45, color: "#ee5a24" },
+            { name: "Дракон", health: 100, attack: 25, gold: 60, exp: 60, color: "#ff3838" },
+            { name: "Демон", health: 120, attack: 30, gold: 80, exp: 75, color: "#7158e2" }
+        ];
+
+        // Данные сундуков
+        const chestsData = [
+            { type: "common", name: "Обычный сундук", gold: [10, 30], items: ["healthPotion", "smallKey"], color: "#ffa502" },
+            { type: "rare", name: "Редкий сундук", gold: [30, 60], items: ["attackPotion", "defensePotion", "bigKey"], color: "#00d4ff" },
+            { type: "epic", name: "Эпический сундук", gold: [60, 120], items: ["treasureMap"], color: "#a55eea" }
+        ];
+
+        // Товары магазина
+        const shopItems = [
+            { id: 1, name: "Зелье здоровья", description: "Восстанавливает 30 HP", price: 20, icon: "fas fa-heart", effect: "heal" },
+            { id: 2, name: "Большое зелье", description: "Восстанавливает 60 HP", price: 40, icon: "fas fa-heartbeat", effect: "bigHeal" },
+            { id: 3, name: "Зелье силы", description: "+5 к атаке на 5 боев", price: 50, icon: "fas fa-fist-raised", effect: "attackBuff" },
+            { id: 4, name: "Стальной меч", description: "Меч с атакой +10", price: 150, icon: "fas fa-sword", effect: "weaponUpgrade" },
+            { id: 5, name: "Стальная броня", description: "Броня с защитой +8", price: 200, icon: "fas fa-tshirt", effect: "armorUpgrade" },
+            { id: 6, name: "Маленький ключ", description: "Открывает простые сундуки", price: 25, icon: "fas fa-key", effect: "smallKey" },
+            { id: 7, name: "Большой ключ", description: "Открывает ценные сундуки", price: 75, icon: "fas fa-key", effect: "bigKey" }
+        ];
+
+        // DOM элементы
+        const currentFloorElement = document.getElementById('current-floor');
+        const goldAmountElement = document.getElementById('gold-amount');
+        const heroHealthElement = document.getElementById('hero-health');
+        const heroLevelElement = document.getElementById('hero-level');
+        const floorNameElement = document.getElementById('floor-name');
+        const floorDescriptionElement = document.getElementById('floor-description');
+        const floorProgressBar = document.getElementById('floor-progress-bar');
+        const gameSceneElement = document.getElementById('game-scene');
+        const inventoryGridElement = document.getElementById('inventory-grid');
+        const enemiesKilledElement = document.getElementById('enemies-killed');
+        const chestsOpenedElement = document.getElementById('chests-opened');
+        const goalProgressElement = document.getElementById('goal-progress');
+        const progressTextElement = document.getElementById('progress-text');
+        const notificationElement = document.getElementById('notification');
+        const notificationTextElement = document.getElementById('notification-text');
+        const loaderElement = document.getElementById('loader');
+        
+        // Кнопки
+        const attackBtn = document.getElementById('attack-btn');
+        const healBtn = document.getElementById('heal-btn');
+        const openBtn = document.getElementById('open-btn');
+        const shopBtn = document.getElementById('shop-btn');
+        const saveGameBtn = document.getElementById('save-game-btn');
+        const loadGameBtn = document.getElementById('load-game-btn');
+        const resetGameBtn = document.getElementById('reset-game-btn');
+        const menuBtn = document.getElementById('menu-btn');
+        
+        // Модальные окна
+        const battleModal = document.getElementById('battle-modal');
+        const chestModal = document.getElementById('chest-modal');
+        const portalModal = document.getElementById('portal-modal');
+        
+        // Вкладки
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Инициализация игры
+        function initGame() {
+            // Скрываем загрузчик
+            setTimeout(() => {
+                loaderElement.classList.add('hidden');
+                setTimeout(() => {
+                    loaderElement.style.display = 'none';
+                }, 500);
+            }, 1000);
+            
+            // Проверяем сохранение
+            const savedGame = localStorage.getItem('ragalik_mobile_save');
+            
+            if (savedGame) {
+                try {
+                    const loadedData = JSON.parse(savedGame);
+                    Object.assign(gameData, loadedData);
+                    showNotification('Игра загружена!', 'success');
+                } catch (e) {
+                    console.error('Ошибка загрузки:', e);
+                    showNotification('Ошибка загрузки сохранения', 'error');
+                }
+            }
+            
+            // Генерируем уровень
+            generateFloor();
+            
+            // Обновляем интерфейс
+            updateUI();
+            
+            // Назначаем обработчики
+            setupEventListeners();
+            
+            // Показываем приветствие
+            setTimeout(() => {
+                showNotification('Добро пожаловать в РАГАЛИК! Тапайте на объекты для взаимодействия.', 'info');
+            }, 1500);
+            
+            // Запускаем таймер
+            setInterval(gameTimer, 1000);
+        }
+        
+        // Настройка обработчиков событий
+        function setupEventListeners() {
+            // Кнопки действий
+            attackBtn.addEventListener('click', () => {
+                showNotification('Тапните на врага для атаки!', 'info');
+            });
+            
+            healBtn.addEventListener('click', () => {
+                useHealthPotion();
+            });
+            
+            openBtn.addEventListener('click', () => {
+                showNotification('Тапните на сундук для открытия!', 'info');
+            });
+            
+            shopBtn.addEventListener('click', () => {
+                openShopTab();
+            });
+            
+            // Кнопки сохранения
+            saveGameBtn.addEventListener('click', saveGame);
+            loadGameBtn.addEventListener('click', loadGame);
+            resetGameBtn.addEventListener('click', resetGame);
+            menuBtn.addEventListener('click', () => {
+                showNotification('Меню игры', 'info');
+            });
+            
+            // Вкладки
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+                    
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+                    
+                    button.classList.add('active');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Закрытие модальных окон
+            document.getElementById('close-battle').addEventListener('click', () => {
+                battleModal.classList.remove('active');
+            });
+            
+            document.getElementById('close-chest').addEventListener('click', () => {
+                chestModal.classList.remove('active');
+            });
+            
+            document.getElementById('close-portal').addEventListener('click', () => {
+                portalModal.classList.remove('active');
+            });
+            
+            // Закрытие по клику вне модального окна
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Предотвращаем скролл при взаимодействии с игрой
+            document.addEventListener('touchmove', (e) => {
+                if (e.target.closest('.game-scene') || e.target.closest('.action-panel')) {
+                    e.preventDefault();
+                }
+            }, { passive: false });
+        }
+        
+        // Генерация уровня
+        function generateFloor() {
+            gameSceneElement.innerHTML = '<div class="floor"></div>';
+            gameData.floorObjects = [];
+            
+            // Создаем платформы
+            const platformCount = 3 + Math.min(Math.floor(gameData.currentFloor / 3), 3);
+            const platforms = [];
+            
+            for (let i = 0; i < platformCount; i++) {
+                const platform = {
+                    x: 20 + (i * 100),
+                    y: 200 + (i * 60),
+                    width: 80 + Math.random() * 60,
+                    height: 20
+                };
+                
+                if (platform.x + platform.width > window.innerWidth - 40) {
+                    platform.x = window.innerWidth - platform.width - 40;
+                }
+                
+                platforms.push(platform);
+                
+                const platformElement = document.createElement('div');
+                platformElement.className = 'platform';
+                platformElement.style.left = `${platform.x}px`;
+                platformElement.style.top = `${platform.y}px`;
+                platformElement.style.width = `${platform.width}px`;
+                platformElement.style.height = `${platform.height}px`;
+                gameSceneElement.appendChild(platformElement);
+            }
+            
+            // Добавляем героя
+            const heroPlatform = platforms[0];
+            createHero(heroPlatform.x + 10, heroPlatform.y - 75);
+            
+            // Добавляем врагов
+            const enemyCount = 1 + Math.floor(gameData.currentFloor / 5);
+            for (let i = 0; i < enemyCount; i++) {
+                const platform = platforms[(i % (platforms.length - 1)) + 1];
+                const enemyType = Math.min(Math.floor(gameData.currentFloor / 3), enemiesData.length - 1);
+                createEnemy(platform.x + 20, platform.y - 65, enemyType);
+            }
+            
+            // Добавляем сундуки
+            const chestCount = 1 + Math.floor(Math.random() * 2);
+            for (let i = 0; i < chestCount; i++) {
+                const platform = platforms[(i + 1) % platforms.length];
+                const chestType = getRandomChestType();
+                createChest(platform.x + 30, platform.y - 45, chestType);
+            }
+            
+            // Добавляем торговца каждые 5 уровней
+            if (gameData.currentFloor % 5 === 0) {
+                const platform = platforms[platforms.length - 1];
+                createMerchant(platform.x + 20, platform.y - 75);
+            }
+            
+            // Добавляем портал
+            const lastPlatform = platforms[platforms.length - 1];
+            createPortal(lastPlatform.x + 30, lastPlatform.y - 85);
+            
+            // Обновляем информацию о ярусе
+            updateFloorInfo();
+            
+            gameData.floorProgress = 0;
+            gameData.floorCompleted = false;
+            gameData.gameState = "exploring";
+        }
+        
+        // Создание героя
+        function createHero(x, y) {
+            const hero = document.createElement('div');
+            hero.className = 'hero float-animation';
+            hero.id = 'hero';
+            hero.style.left = `${x}px`;
+            hero.style.top = `${y}px`;
+            
+            hero.innerHTML = `
+                <div class="health-bar">
+                    <div class="health-fill" id="hero-health-bar" style="width: ${(gameData.heroHealth / gameData.heroMaxHealth) * 100}%"></div>
+                </div>
+                <div class="hero-head"></div>
+                <div class="hero-body"></div>
+            `;
+            
+            hero.addEventListener('click', () => {
+                showNotification(`Ваше здоровье: ${gameData.heroHealth}/${gameData.heroMaxHealth}`, 'info');
+            });
+            
+            gameSceneElement.appendChild(hero);
+        }
+        
+        // Создание врага
+        function createEnemy(x, y, typeIndex) {
+            const enemyData = enemiesData[typeIndex];
+            const enemy = {
+                x, y, typeIndex,
+                health: enemyData.health,
+                maxHealth: enemyData.health,
+                attack: enemyData.attack,
+                gold: enemyData.gold,
+                exp: enemyData.exp,
+                name: enemyData.name,
+                element: null
+            };
+            
+            gameData.floorObjects.push(enemy);
+            
+            const enemyElement = document.createElement('div');
+            enemyElement.className = 'enemy';
+            enemyElement.style.left = `${x}px`;
+            enemyElement.style.top = `${y}px`;
+            enemyElement.dataset.objectId = gameData.floorObjects.length - 1;
+            
+            enemyElement.innerHTML = `
+                <div class="health-bar">
+                    <div class="health-fill enemy-health-fill" style="width: 100%"></div>
+                </div>
+                <div class="enemy-head"></div>
+                <div class="enemy-body"></div>
+            `;
+            
+            enemyElement.addEventListener('click', () => {
+                if (gameData.gameState === "exploring") {
+                    startBattle(enemy);
+                }
+            });
+            
+            gameSceneElement.appendChild(enemyElement);
+            enemy.element = enemyElement;
+        }
+        
+        // Создание сундука
+        function createChest(x, y, type) {
+            const chestData = chestsData.find(c => c.type === type) || chestsData[0];
+            const chest = {
+                x, y, type,
+                name: chestData.name,
+                gold: chestData.gold,
+                items: chestData.items,
+                opened: false,
+                element: null
+            };
+            
+            gameData.floorObjects.push(chest);
+            
+            const chestElement = document.createElement('div');
+            chestElement.className = 'chest';
+            chestElement.style.left = `${x}px`;
+            chestElement.style.top = `${y}px`;
+            chestElement.style.background = `linear-gradient(135deg, ${chestData.color}, ${darkenColor(chestData.color, 20)})`;
+            chestElement.dataset.objectId = gameData.floorObjects.length - 1;
+            
+            chestElement.innerHTML = `
+                <div class="chest-lid"></div>
+                <i class="fas fa-treasure-chest"></i>
+            `;
+            
+            chestElement.addEventListener('click', () => {
+                if (gameData.gameState === "exploring") {
+                    openChest(chest);
+                }
+            });
+            
+            gameSceneElement.appendChild(chestElement);
+            chest.element = chestElement;
+        }
+        
+        // Создание торговца
+        function createMerchant(x, y) {
+            const merchant = {
+                x, y,
+                element: null
+            };
+            
+            gameData.floorObjects.push(merchant);
+            
+            const merchantElement = document.createElement('div');
+            merchantElement.className = 'merchant float-animation';
+            merchantElement.style.left = `${x}px`;
+            merchantElement.style.top = `${y}px`;
+            merchantElement.dataset.objectId = gameData.floorObjects.length - 1;
+            
+            merchantElement.innerHTML = `
+                <div class="merchant-head"></div>
+                <div class="merchant-body"></div>
+            `;
+            
+            merchantElement.addEventListener('click', () => {
+                openShop();
+            });
+            
+            gameSceneElement.appendChild(merchantElement);
+            merchant.element = merchantElement;
+        }
+        
+        // Создание портала
+        function createPortal(x, y) {
+            const portal = {
+                x, y,
+                element: null
+            };
+            
+            gameData.floorObjects.push(portal);
+            
+            const portalElement = document.createElement('div');
+            portalElement.className = 'portal';
+            portalElement.style.left = `${x}px`;
+            portalElement.style.top = `${y}px`;
+            portalElement.dataset.objectId = gameData.floorObjects.length - 1;
+            
+            portalElement.innerHTML = `<i class="fas fa-door-open"></i>`;
+            
+            portalElement.addEventListener('click', () => {
+                if (gameData.gameState === "exploring") {
+                    if (gameData.floorCompleted) {
+                        enterPortal();
+                    } else {
+                        showNotification('Завершите все задачи на ярусе!', 'warning');
+                    }
+                }
+            });
+            
+            gameSceneElement.appendChild(portalElement);
+            portal.element = portalElement;
+        }
+        
+        // Случайный тип сундука
+        function getRandomChestType() {
+            const r = Math.random();
+            if (r < 0.7) return 'common';
+            if (r < 0.9) return 'rare';
+            return 'epic';
+        }
+        
+        // Темнение цвета
+        function darkenColor(color, percent) {
+            const num = parseInt(color.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) - amt;
+            const G = (num >> 8 & 0x00FF) - amt;
+            const B = (num & 0x0000FF) - amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+        
+        // Обновление интерфейса
+        function updateUI() {
+            currentFloorElement.textContent = gameData.currentFloor;
+            goldAmountElement.textContent = gameData.gold;
+            heroHealthElement.textContent = gameData.heroHealth;
+            heroLevelElement.textContent = gameData.heroLevel;
+            enemiesKilledElement.textContent = gameData.enemiesKilled;
+            chestsOpenedElement.textContent = gameData.chestsOpened;
+            
+            // Прогресс до цели
+            const goalProgress = (gameData.currentFloor / gameData.maxFloor) * 100;
+            goalProgressElement.style.width = `${goalProgress}%`;
+            progressTextElement.textContent = `Прогресс: ${gameData.currentFloor}/${gameData.maxFloor} ярусов`;
+            
+            // Прогресс текущего яруса
+            floorProgressBar.style.width = `${gameData.floorProgress}%`;
+            
+            // Обновление инвентаря
+            updateInventory();
+            
+            // Обновление магазина
+            updateShop();
+        }
+        
+        // Обновление информации о ярусе
+        function updateFloorInfo() {
+            const floorNames = [
+                "Ярус 1: Вход в Подземелье",
+                "Ярус 2: Пещеры Гоблинов",
+                "Ярус 3: Туннели Слаймов",
+                "Ярус 4: Крысиные Норы",
+                "Ярус 5: Склеп Скелетов",
+                "Ярус 6: Лагерь Орков",
+                "Ярус 7: Башня Темного Мага",
+                "Ярус 8: Гнездо Гарпий",
+                "Ярус 9: Лабиринт Минотавра",
+                "Ярус 10: Логово Дракона",
+                "Ярус 11: Пределы Демона",
+                "Ярус 12: Чертоги Лича",
+                "Ярус 13: Залы Голема",
+                "Ярус 14: Тронный Зал",
+                "Ярус 15: Логово Древнего",
+                "Ярус 16: Цитадель",
+                "Ярус 17: Дворец",
+                "Ярус 18: Врата Бездны",
+                "Ярус 19: Пустоты Хаоса",
+                "Ярус 20: Пределы Создателя",
+                "Ярус 21: Испытание",
+                "Ярус 22: Арена Хаоса",
+                "Ярус 23: Сердце Подземелья",
+                "Ярус 24: Последний Рубеж",
+                "Ярус 25: Врата Забвения",
+                "Ярус 26: Престол Тьмы",
+                "Ярус 27: Исток Подземелья"
+            ];
+            
+            const floorDescriptions = [
+                "Начало вашего опасного путешествия",
+                "Гоблины роют здесь свои норы",
+                "Слизнеобразные твари заполонили туннели",
+                "Гигантские крысы нападают на всё",
+                "Мертвые скелеты охраняют сокровища",
+                "Орки построили здесь свой лагерь",
+                "Маги экспериментируют с тёмными силами",
+                "Гарпии парят в воздухе",
+                "Минотавр бродит по лабиринту",
+                "Драконы обитают в глубине",
+                "Демоны из других миров",
+                "Лич проводит мрачные ритуалы",
+                "Каменные големы охраняют уровень",
+                "Король гоблинов собрал армию",
+                "Древний дракон спит в пещере",
+                "Повелитель демонов правит цитаделью",
+                "Темный властелин наблюдает",
+                "Хранитель бездны защищает врата",
+                "Бог хаоса искажает реальность",
+                "Создатель подземелья ждёт смельчаков",
+                "Последнее испытание перед финалом",
+                "Финальная битва с богом хаоса",
+                "Самое сердце подземелья",
+                "Последний рубеж перед истиной",
+                "Врата, за которыми лишь забвение",
+                "Тёмный престол пустует",
+                "Конец пути. Исток всего"
+            ];
+            
+            floorNameElement.textContent = floorNames[gameData.currentFloor - 1] || `Ярус ${gameData.currentFloor}`;
+            floorDescriptionElement.textContent = floorDescriptions[gameData.currentFloor - 1] || "Неизвестная глубина";
+        }
+        
+        // Обновление инвентаря
+        function updateInventory() {
+            inventoryGridElement.innerHTML = '';
+            
+            Object.keys(gameData.inventory).forEach(itemKey => {
+                const item = gameData.inventory[itemKey];
+                if (item.count > 0) {
+                    const itemElement = document.createElement('div');
+                    itemElement.className = 'inventory-item';
+                    itemElement.dataset.item = itemKey;
+                    
+                    itemElement.innerHTML = `
+                        <div class="item-icon">
+                            <i class="${item.icon}"></i>
+                        </div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-count">${item.count}</div>
+                    `;
+                    
+                    itemElement.addEventListener('click', () => {
+                        useInventoryItem(itemKey);
+                    });
+                    
+                    inventoryGridElement.appendChild(itemElement);
+                }
+            });
+            
+            // Добавляем пустые слоты
+            const totalSlots = 6;
+            const filledSlots = Object.keys(gameData.inventory).filter(key => gameData.inventory[key].count > 0).length;
+            
+            for (let i = filledSlots; i < totalSlots; i++) {
+                const emptySlot = document.createElement('div');
+                emptySlot.className = 'inventory-item';
+                emptySlot.innerHTML = `
+                    <div class="item-icon" style="background: rgba(255,255,255,0.1);">
+                        <i class="fas fa-plus" style="color: rgba(255,255,255,0.3);"></i>
+                    </div>
+                    <div class="item-name">Пусто</div>
+                `;
+                inventoryGridElement.appendChild(emptySlot);
+            }
+        }
+        
+        // Обновление магазина
+        function updateShop() {
+            const shopItemsElement = document.getElementById('shop-items');
+            if (!shopItemsElement) return;
+            
+            shopItemsElement.innerHTML = '';
+            
+            shopItems.forEach(item => {
+                const shopItemElement = document.createElement('div');
+                shopItemElement.className = 'shop-item';
+                
+                shopItemElement.innerHTML = `
+                    <div class="shop-icon">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <div class="shop-info">
+                        <div class="shop-name">${item.name}</div>
+                        <div class="shop-desc">${item.description}</div>
+                    </div>
+                    <div class="shop-price">${item.price}</div>
+                `;
+                
+                shopItemElement.addEventListener('click', () => {
+                    buyShopItem(item);
+                });
+                
+                shopItemsElement.appendChild(shopItemElement);
+            });
+        }
+        
+        // Использование зелья здоровья
+        function useHealthPotion() {
+            if (gameData.inventory.healthPotion.count > 0) {
+                if (gameData.heroHealth < gameData.heroMaxHealth) {
+                    const healAmount = 30;
+                    gameData.heroHealth = Math.min(gameData.heroHealth + healAmount, gameData.heroMaxHealth);
+                    gameData.inventory.healthPotion.count--;
+                    
+                    // Обновляем здоровье на герое
+                    const heroHealthBar = document.getElementById('hero-health-bar');
+                    if (heroHealthBar) {
+                        const healthPercent = (gameData.heroHealth / gameData.heroMaxHealth) * 100;
+                        heroHealthBar.style.width = `${healthPercent}%`;
+                    }
+                    
+                    showNotification(`Вы использовали зелье здоровья (+${healAmount} HP)`, 'success');
+                    updateUI();
+                } else {
+                    showNotification('У вас и так полное здоровье!', 'warning');
+                }
+            } else {
+                showNotification('У вас нет зелий здоровья!', 'error');
+            }
+        }
+        
+        // Использование предмета из инвентаря
+        function useInventoryItem(itemKey) {
+            const item = gameData.inventory[itemKey];
+            
+            if (!item || item.count <= 0) return;
+            
+            switch(itemKey) {
+                case 'healthPotion':
+                    useHealthPotion();
+                    break;
+                    
+                case 'attackPotion':
+                    gameData.attackPower += 5;
+                    gameData.inventory[itemKey].count--;
+                    showNotification(`Атака повышена на 5 на 5 боев!`, 'success');
+                    updateUI();
+                    break;
+                    
+                case 'defensePotion':
+                    gameData.defense += 5;
+                    gameData.inventory[itemKey].count--;
+                    showNotification(`Защита повышена на 5 на 5 боев!`, 'success');
+                    updateUI();
+                    break;
+                    
+                default:
+                    showNotification(`Предмет "${item.name}" нельзя использовать напрямую`, 'info');
+                    break;
+            }
+        }
+        
+        // Покупка в магазине
+        function buyShopItem(item) {
+            if (gameData.gold >= item.price) {
+                gameData.gold -= item.price;
+                
+                switch(item.effect) {
+                    case 'heal':
+                        gameData.heroHealth = Math.min(gameData.heroHealth + 30, gameData.heroMaxHealth);
+                        showNotification(`Куплено зелье здоровья (+30 HP)`, 'success');
+                        break;
+                        
+                    case 'bigHeal':
+                        gameData.heroHealth = Math.min(gameData.heroHealth + 60, gameData.heroMaxHealth);
+                        showNotification(`Куплено большое зелье (+60 HP)`, 'success');
+                        break;
+                        
+                    case 'attackBuff':
+                        gameData.attackPower += 5;
+                        showNotification(`Куплено зелье силы (+5 атаки)`, 'success');
+                        break;
+                        
+                    case 'weaponUpgrade':
+                        gameData.equipment.weapon = { name: "Стальной меч", attack: 10 };
+                        gameData.attackPower += 5;
+                        showNotification(`Куплен стальной меч!`, 'success');
+                        break;
+                        
+                    case 'armorUpgrade':
+                        gameData.equipment.armor = { name: "Стальная броня", defense: 8 };
+                        gameData.defense += 5;
+                        showNotification(`Куплена стальная броня!`, 'success');
+                        break;
+                        
+                    case 'smallKey':
+                        gameData.inventory.smallKey.count++;
+                        showNotification(`Куплен маленький ключ`, 'success');
+                        break;
+                        
+                    case 'bigKey':
+                        gameData.inventory.bigKey.count++;
+                        showNotification(`Куплен большой ключ`, 'success');
+                        break;
+                }
+                
+                updateUI();
+            } else {
+                showNotification('Недостаточно золота!', 'error');
+            }
+        }
+        
+        // Открытие магазина
+        function openShop() {
+            gameData.merchantsVisited++;
+            openShopTab();
+            showNotification('Добро пожаловать в магазин!', 'info');
+        }
+        
+        // Переход на вкладку магазина
+        function openShopTab() {
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            document.querySelector('.tab-btn[data-tab="shop"]').classList.add('active');
+            document.getElementById('shop').classList.add('active');
+        }
+        
+        // Начало боя
+        function startBattle(enemy) {
+            gameData.gameState = "battling";
+            gameData.selectedObject = enemy;
+            
+            const battleContent = document.getElementById('battle-content');
+            battleContent.innerHTML = `
+                <div class="battle-characters">
+                    <div class="character">
+                        <div class="character-avatar hero-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="character-name">Герой</div>
+                        <div class="character-health">${gameData.heroHealth}/${gameData.heroMaxHealth} HP</div>
+                    </div>
+                    <div class="vs-text">VS</div>
+                    <div class="character">
+                        <div class="character-avatar enemy-avatar">
+                            <i class="fas fa-skull"></i>
+                        </div>
+                        <div class="character-name">${enemy.name}</div>
+                        <div class="character-health">${enemy.health}/${enemy.maxHealth} HP</div>
+                    </div>
+                </div>
+                
+                <div class="battle-log" id="battle-log">
+                    Бой с ${enemy.name} начинается!
+                </div>
+                
+                <div class="battle-actions">
+                    <button class="battle-btn attack-action" id="battle-attack">
+                        <i class="fas fa-fist-raised"></i>
+                        Атаковать
+                    </button>
+                    <button class="battle-btn potion-action" id="battle-potion">
+                        <i class="fas fa-heart"></i>
+                        Зелье
+                    </button>
+                    <button class="battle-btn flee-action" id="battle-flee">
+                        <i class="fas fa-running"></i>
+                        Бежать
+                    </button>
+                </div>
+            `;
+            
+            battleModal.classList.add('active');
+            
+            // Назначаем обработчики для кнопок боя
+            document.getElementById('battle-attack').addEventListener('click', () => performAttack(enemy));
+            document.getElementById('battle-potion').addEventListener('click', () => usePotionInBattle(enemy));
+            document.getElementById('battle-flee').addEventListener('click', () => fleeBattle(enemy));
+        }
+        
+        // Атака в бою
+        function performAttack(enemy) {
+            const battleLog = document.getElementById('battle-log');
+            
+            // Атака героя
+            let damage = gameData.attackPower;
+            const isCritical = Math.random() * 100 < gameData.criticalChance;
+            
+            if (isCritical) {
+                damage *= gameData.criticalMultiplier;
+                battleLog.innerHTML = `КРИТИЧЕСКИЙ УДАР!<br>Вы нанесли ${damage} урона!`;
+            } else {
+                battleLog.innerHTML = `Вы нанесли ${damage} урона ${enemy.name}!`;
+            }
+            
+            enemy.health -= damage;
+            gameData.totalDamageDealt += damage;
+            
+            // Обновляем здоровье врага
+            if (enemy.element) {
+                const healthBar = enemy.element.querySelector('.health-fill');
+                if (healthBar) {
+                    const healthPercent = (enemy.health / enemy.maxHealth) * 100;
+                    healthBar.style.width = `${Math.max(0, healthPercent)}%`;
+                }
+            }
+            
+            // Проверяем победу
+            if (enemy.health <= 0) {
+                battleLog.innerHTML += `<br>Вы победили ${enemy.name}!`;
+                
+                // Награда
+                const goldReward = enemy.gold;
+                const expReward = enemy.exp;
+                
+                gameData.gold += goldReward;
+                gameData.heroExp += expReward;
+                gameData.enemiesKilled++;
+                gameData.totalGoldCollected += goldReward;
+                
+                // Удаляем врага
+                if (enemy.element) {
+                    enemy.element.remove();
+                }
+                
+                // Убираем из массива объектов
+                const index = gameData.floorObjects.indexOf(enemy);
+                if (index !== -1) {
+                    gameData.floorObjects.splice(index, 1);
+                }
+                
+                // Обновляем прогресс
+                updateFloorProgress();
+                
+                // Проверяем уровень
+                checkLevelUp();
+                
+                updateUI();
+                
+                // Закрываем окно боя
+                setTimeout(() => {
+                    battleModal.classList.remove('active');
+                    gameData.gameState = "exploring";
+                    gameData.selectedObject = null;
+                    
+                    showNotification(`Победа! Получено ${goldReward} золота и ${expReward} опыта`, 'success');
+                }, 2000);
+                
+                return;
+            }
+            
+            // Атака врага
+            setTimeout(() => {
+                const dodged = Math.random() * 100 < gameData.dodgeChance;
+                
+                if (dodged) {
+                    battleLog.innerHTML += `<br>${enemy.name} атакует, но вы уворачиваетесь!`;
+                } else {
+                    const enemyDamage = Math.max(1, enemy.attack - Math.floor(gameData.defense / 2));
+                    gameData.heroHealth -= enemyDamage;
+                    
+                    battleLog.innerHTML += `<br>${enemy.name} наносит ${enemyDamage} урона!`;
+                    
+                    // Обновляем здоровье героя
+                    const heroHealthBar = document.getElementById('hero-health-bar');
+                    if (heroHealthBar) {
+                        const healthPercent = (gameData.heroHealth / gameData.heroMaxHealth) * 100;
+                        heroHealthBar.style.width = `${Math.max(0, healthPercent)}%`;
+                    }
+                    
+                    heroHealthElement.textContent = gameData.heroHealth;
+                    
+                    // Проверяем смерть
+                    if (gameData.heroHealth <= 0) {
+                        battleLog.innerHTML += `<br>Вы погибли...`;
+                        
+                        setTimeout(() => {
+                            battleModal.classList.remove('active');
+                            gameOver();
+                        }, 2000);
+                    }
+                }
+                
+                updateUI();
+            }, 1000);
+        }
+        
+        // Использование зелья в бою
+        function usePotionInBattle(enemy) {
+            if (gameData.inventory.healthPotion.count > 0) {
+                const healAmount = 30;
+                gameData.heroHealth = Math.min(gameData.heroHealth + healAmount, gameData.heroMaxHealth);
+                gameData.inventory.healthPotion.count--;
+                
+                const battleLog = document.getElementById('battle-log');
+                battleLog.innerHTML = `Вы использовали зелье здоровья (+${healAmount} HP)`;
+                
+                // Обновляем здоровье
+                const heroHealthBar = document.getElementById('hero-health-bar');
+                if (heroHealthBar) {
+                    const healthPercent = (gameData.heroHealth / gameData.heroMaxHealth) * 100;
+                    heroHealthBar.style.width = `${healthPercent}%`;
+                }
+                
+                updateUI();
+            } else {
+                const battleLog = document.getElementById('battle-log');
+                battleLog.innerHTML = 'Нет зелий здоровья!';
+            }
+        }
+        
+        // Попытка побега
+        function fleeBattle(enemy) {
+            const battleLog = document.getElementById('battle-log');
+            const fleeChance = 60;
+            
+            if (Math.random() * 100 < fleeChance) {
+                battleLog.innerHTML = `Вы успешно сбежали!`;
+                
+                setTimeout(() => {
+                    battleModal.classList.remove('active');
+                    gameData.gameState = "exploring";
+                    gameData.selectedObject = null;
+                }, 1500);
+            } else {
+                battleLog.innerHTML = `Не удалось сбежать!`;
+                
+                setTimeout(() => {
+                    const enemyDamage = Math.max(1, enemy.attack - Math.floor(gameData.defense / 2));
+                    gameData.heroHealth -= enemyDamage;
+                    
+                    battleLog.innerHTML += `<br>${enemy.name} наносит ${enemyDamage} урона!`;
+                    
+                    const heroHealthBar = document.getElementById('hero-health-bar');
+                    if (heroHealthBar) {
+                        const healthPercent = (gameData.heroHealth / gameData.heroMaxHealth) * 100;
+                        heroHealthBar.style.width = `${Math.max(0, healthPercent)}%`;
+                    }
+                    
+                    heroHealthElement.textContent = gameData.heroHealth;
+                    
+                    if (gameData.heroHealth <= 0) {
+                        battleLog.innerHTML += `<br>Вы погибли...`;
+                        
+                        setTimeout(() => {
+                            battleModal.classList.remove('active');
+                            gameOver();
+                        }, 2000);
+                    }
+                    
+                    updateUI();
+                }, 1000);
+            }
+        }
+        
+        // Открытие сундука
+        function openChest(chest) {
+            if (chest.opened) {
+                showNotification('Сундук уже открыт!', 'warning');
+                return;
+            }
+            
+            // Проверяем ключ для редких сундуков
+            if (chest.type !== 'common') {
+                const neededKey = chest.type === 'rare' ? 'smallKey' : 'bigKey';
+                
+                if (gameData.inventory[neededKey].count <= 0) {
+                    showNotification(`Нужен ${gameData.inventory[neededKey].name.toLowerCase()}!`, 'error');
+                    return;
+                }
+                
+                gameData.inventory[neededKey].count--;
+            }
+            
+            chest.opened = true;
+            gameData.chestsOpened++;
+            
+            // Награда
+            const goldMin = chest.gold[0];
+            const goldMax = chest.gold[1];
+            const goldReward = Math.floor(goldMin + Math.random() * (goldMax - goldMin));
+            
+            gameData.gold += goldReward;
+            gameData.totalGoldCollected += goldReward;
+            
+            // Предмет
+            let itemReward = null;
+            if (Math.random() < 0.7) {
+                const randomItemKey = chest.items[Math.floor(Math.random() * chest.items.length)];
+                itemReward = randomItemKey;
+                
+                if (gameData.inventory[randomItemKey]) {
+                    gameData.inventory[randomItemKey].count++;
+                }
+            }
+            
+            // Обновляем сундук
+            if (chest.element) {
+                chest.element.style.background = 'linear-gradient(135deg, #7f8c8d, #95a5a6)';
+                chest.element.innerHTML = `
+                    <div class="chest-lid" style="transform: rotate(-45deg); top: -20px; left: 10px;"></div>
+                    <i class="fas fa-box-open"></i>
+                `;
+            }
+            
+            // Показываем окно
+            const chestContent = document.getElementById('chest-content');
+            chestContent.innerHTML = `
+                <div style="text-align: center; padding: 20px 0;">
+                    <div style="width: 100px; height: 100px; background: linear-gradient(135deg, ${chest.type === 'common' ? '#ffa502' : chest.type === 'rare' ? '#00d4ff' : '#a55eea'}, ${darkenColor(chest.type === 'common' ? '#ffa502' : chest.type === 'rare' ? '#00d4ff' : '#a55eea', 20)}); border-radius: 20px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-treasure-chest" style="font-size: 3rem; color: white;"></i>
+                    </div>
+                    <h3 style="color: var(--accent); margin-bottom: 15px;">${chest.name}</h3>
+                    <div style="font-size: 1.2rem; margin-bottom: 10px;">Вы получили: <span style="color: var(--gold); font-weight: bold;">${goldReward} золота</span></div>
+                    ${itemReward ? `<div style="font-size: 1.2rem;">И предмет: <span style="color: var(--success); font-weight: bold;">${gameData.inventory[itemReward].name}</span></div>` : ''}
+                    <button class="battle-btn" id="close-chest-btn" style="margin-top: 20px; background: linear-gradient(135deg, var(--accent), #0088cc);">
+                        Закрыть
+                    </button>
+                </div>
+            `;
+            
+            chestModal.classList.add('active');
+            
+            document.getElementById('close-chest-btn').addEventListener('click', () => {
+                chestModal.classList.remove('active');
+                gameData.selectedObject = null;
+                
+                updateFloorProgress();
+                showNotification(`Сундук открыт! +${goldReward} золота`, 'success');
+                updateUI();
+            });
+        }
+        
+        // Вход в портал
+        function enterPortal() {
+            const portalContent = document.getElementById('portal-content');
+            portalContent.innerHTML = `
+                <div style="text-align: center; padding: 20px 0;">
+                    <div style="width: 120px; height: 120px; background: radial-gradient(circle, var(--accent), #0088cc); border-radius: 50%; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; animation: pulse 2s infinite;">
+                        <i class="fas fa-door-open" style="font-size: 3rem; color: white;"></i>
+                    </div>
+                    <h3 style="color: var(--accent); margin-bottom: 15px;">Портал на следующий ярус</h3>
+                    <p style="margin-bottom: 20px;">Перейти на ярус ${gameData.currentFloor + 1}?</p>
+                    <div style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="battle-btn" id="enter-portal-btn" style="background: linear-gradient(135deg, var(--success), #25a25a);">
+                            Да
+                        </button>
+                        <button class="battle-btn" id="cancel-portal-btn" style="background: linear-gradient(135deg, #7f8c8d, #95a5a6);">
+                            Нет
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            portalModal.classList.add('active');
+            
+            document.getElementById('enter-portal-btn').addEventListener('click', () => {
+                portalModal.classList.remove('active');
+                
+                gameData.currentFloor++;
+                gameData.floorsCompleted++;
+                
+                if (gameData.currentFloor > gameData.maxFloor) {
+                    gameData.currentFloor = gameData.maxFloor;
+                    gameWon();
+                } else {
+                    generateFloor();
+                    showNotification(`Ярус ${gameData.currentFloor}!`, 'success');
+                    updateUI();
+                }
+            });
+            
+            document.getElementById('cancel-portal-btn').addEventListener('click', () => {
+                portalModal.classList.remove('active');
+            });
+        }
+        
+        // Обновление прогресса уровня
+        function updateFloorProgress() {
+            const totalObjects = gameData.floorObjects.filter(obj => 
+                obj.hasOwnProperty('health') || (obj.hasOwnProperty('type') && obj.type && !obj.opened)
+            ).length;
+            
+            const completedObjects = gameData.floorObjects.filter(obj => 
+                (obj.hasOwnProperty('health') && obj.health <= 0) || 
+                (obj.hasOwnProperty('type') && obj.type && obj.opened)
+            ).length;
+            
+            gameData.floorProgress = totalObjects > 0 ? Math.floor((completedObjects / totalObjects) * 100) : 100;
+            
+            if (gameData.floorProgress >= 100 && !gameData.floorCompleted) {
+                gameData.floorCompleted = true;
+                showNotification('Ярус завершен! Используйте портал.', 'success');
+            }
+            
+            floorProgressBar.style.width = `${gameData.floorProgress}%`;
+        }
+        
+        // Проверка повышения уровня
+        function checkLevelUp() {
+            while (gameData.heroExp >= gameData.expToNextLevel) {
+                gameData.heroLevel++;
+                gameData.heroExp -= gameData.expToNextLevel;
+                gameData.expToNextLevel = Math.floor(gameData.expToNextLevel * 1.5);
+                
+                gameData.heroMaxHealth += 20;
+                gameData.heroHealth = gameData.heroMaxHealth;
+                gameData.attackPower += 3;
+                gameData.defense += 2;
+                
+                showNotification(`Уровень ${gameData.heroLevel}! Характеристики повышены`, 'success');
+                updateUI();
+            }
+        }
+        
+        // Сохранение игры
+        function saveGame() {
+            try {
+                gameData.lastSave = new Date().toISOString();
+                localStorage.setItem('ragalik_mobile_save', JSON.stringify(gameData));
+                showNotification('Игра сохранена!', 'success');
+            } catch (error) {
+                showNotification('Ошибка сохранения', 'error');
+                console.error('Save error:', error);
+            }
+        }
+        
+        // Загрузка игры
+        function loadGame() {
+            try {
+                const savedData = localStorage.getItem('ragalik_mobile_save');
+                
+                if (savedData) {
+                    const loadedData = JSON.parse(savedData);
+                    Object.assign(gameData, loadedData);
+                    
+                    generateFloor();
+                    updateUI();
+                    
+                    showNotification('Игра загружена!', 'success');
+                    return true;
+                } else {
+                    showNotification('Сохранение не найдено', 'warning');
+                    return false;
+                }
+            } catch (error) {
+                showNotification('Ошибка загрузки', 'error');
+                console.error('Load error:', error);
+                return false;
+            }
+        }
+        
+        // Сброс игры
+        function resetGame() {
+            if (confirm('Начать заново? Весь прогресс будет потерян!')) {
+                const defaultData = {
+                    currentFloor: 1,
+                    gold: 100,
+                    heroHealth: 100,
+                    heroMaxHealth: 100,
+                    heroLevel: 1,
+                    heroExp: 0,
+                    expToNextLevel: 100,
+                    enemiesKilled: 0,
+                    chestsOpened: 0,
+                    trapsTriggered: 0,
+                    merchantsVisited: 0,
+                    floorsCompleted: 0,
+                    totalDamageDealt: 0,
+                    totalGoldCollected: 100,
+                    playTime: 0,
+                    attackPower: 10,
+                    defense: 5,
+                    criticalChance: 5,
+                    criticalMultiplier: 2,
+                    dodgeChance: 10,
+                    inventory: {
+                        healthPotion: { name: "Зелье здоровья", count: 3, description: "Восстанавливает 30 HP", icon: "fas fa-heart", type: "consumable" },
+                        attackPotion: { name: "Зелье силы", count: 1, description: "+5 к атаке на 5 боев", icon: "fas fa-fist-raised", type: "consumable" },
+                        defensePotion: { name: "Зелье защиты", count: 1, description: "+5 к защите на 5 боев", icon: "fas fa-shield-alt", type: "consumable" },
+                        smallKey: { name: "Маленький ключ", count: 2, description: "Открывает простые сундуки", icon: "fas fa-key", type: "key" },
+                        bigKey: { name: "Большой ключ", count: 0, description: "Открывает ценные сундуки", icon: "fas fa-key", type: "key" },
+                        treasureMap: { name: "Карта сокровищ", count: 0, description: "Показывает скрытые сундуки", icon: "fas fa-map", type: "special" }
+                    },
+                    equipment: {
+                        weapon: { name: "Ржавый меч", attack: 5 },
+                        armor: { name: "Кожаная броня", defense: 3 }
+                    },
+                    gameState: "exploring",
+                    selectedObject: null,
+                    floorProgress: 0,
+                    floorCompleted: false,
+                    floorObjects: [],
+                    lastSave: null
+                };
+                
+                Object.assign(gameData, defaultData);
+                generateFloor();
+                updateUI();
+                
+                showNotification('Новая игра начата!', 'success');
+            }
+        }
+        
+        // Таймер игры
+        function gameTimer() {
+            gameData.playTime++;
+            
+            if (gameData.settings.autoSave && gameData.playTime % 300 === 0) {
+                saveGame();
+            }
+        }
+        
+        // Конец игры
+        function gameOver() {
+            showNotification('Вы погибли...', 'error');
+            
+            setTimeout(() => {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay active';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <div class="modal-title">КОНЕЦ ИГРЫ</div>
+                            <button class="modal-close" id="close-gameover">&times;</button>
+                        </div>
+                        <div class="modal-content">
+                            <div style="text-align: center; padding: 20px 0;">
+                                <h3 style="color: var(--danger); margin-bottom: 20px;">Вы погибли</h3>
+                                <div style="margin-bottom: 20px;">
+                                    <div>Достигнутый ярус: <span style="color: var(--accent);">${gameData.currentFloor}</span></div>
+                                    <div>Уровень героя: <span style="color: var(--accent);">${gameData.heroLevel}</span></div>
+                                    <div>Убито врагов: <span style="color: var(--accent);">${gameData.enemiesKilled}</span></div>
+                                    <div>Собрано золота: <span style="color: var(--accent);">${gameData.totalGoldCollected}</span></div>
+                                </div>
+                                <button class="battle-btn" id="restart-btn" style="background: linear-gradient(135deg, var(--accent), #0088cc);">
+                                    НАЧАТЬ ЗАНОВО
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                document.getElementById('close-gameover').addEventListener('click', () => {
+                    modal.remove();
+                    resetGame();
+                });
+                
+                document.getElementById('restart-btn').addEventListener('click', () => {
+                    modal.remove();
+                    resetGame();
+                });
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                        resetGame();
+                    }
+                });
+            }, 1000);
+        }
+        
+        // Победа в игре
+        function gameWon() {
+            showNotification('ПОБЕДА! Вы достигли 27 яруса!', 'success');
+            
+            setTimeout(() => {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay active';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <div class="modal-title">ПОБЕДА!</div>
+                            <button class="modal-close" id="close-gamewon">&times;</button>
+                        </div>
+                        <div class="modal-content">
+                            <div style="text-align: center; padding: 20px 0;">
+                                <h3 style="color: var(--success); margin-bottom: 20px;">Вы достигли 27 яруса!</h3>
+                                <div style="margin-bottom: 20px;">
+                                    <div>Финальный уровень: <span style="color: var(--accent);">${gameData.heroLevel}</span></div>
+                                    <div>Всего убито врагов: <span style="color: var(--accent);">${gameData.enemiesKilled}</span></div>
+                                    <div>Всего золота: <span style="color: var(--accent);">${gameData.totalGoldCollected}</span></div>
+                                    <div style="color: var(--gold); font-weight: bold; margin-top: 10px;">Вы настоящий РАГАЛИК!</div>
+                                </div>
+                                <button class="battle-btn" id="continue-btn" style="background: linear-gradient(135deg, var(--success), #25a25a);">
+                                    ПРОДОЛЖИТЬ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                
+                document.getElementById('close-gamewon').addEventListener('click', () => {
+                    modal.remove();
+                });
+                
+                document.getElementById('continue-btn').addEventListener('click', () => {
+                    modal.remove();
+                });
+                
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }, 1500);
+        }
+        
+        // Показ уведомлений
+        function showNotification(message, type = 'info') {
+            notificationTextElement.textContent = message;
+            
+            // Обновляем иконку
+            const icon = notificationElement.querySelector('.notification-icon');
+            icon.className = 'notification-icon';
+            
+            switch(type) {
+                case 'success':
+                    icon.classList.add('notification-success');
+                    icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+                    break;
+                case 'error':
+                    icon.classList.add('notification-error');
+                    icon.innerHTML = '<i class="fas fa-exclamation-circle"></i>';
+                    break;
+                case 'warning':
+                    icon.classList.add('notification-warning');
+                    icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                    break;
+                default:
+                    icon.classList.add('notification-info');
+                    icon.innerHTML = '<i class="fas fa-info-circle"></i>';
+                    break;
+            }
+            
+            notificationElement.classList.add('show');
+            
+            setTimeout(() => {
+                notificationElement.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Запуск игры
+        window.addEventListener('DOMContentLoaded', initGame);
+        
+        // Предотвращение масштабирования при двойном тапе
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+        
+        // Предотвращение контекстного меню
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+    </script>
+</body>
+</html>
